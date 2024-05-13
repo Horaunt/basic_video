@@ -13,6 +13,7 @@ class VideoApp extends StatefulWidget {
 
 class _VideoAppState extends State<VideoApp> {
   List<VideoInfo> videos = [];
+  List<VideoInfo> filteredVideos = [];
 
   @override
   void initState() {
@@ -27,10 +28,20 @@ class _VideoAppState extends State<VideoApp> {
       final List<dynamic> data = json.decode(response.body);
       setState(() {
         videos = data.map((videoJson) => VideoInfo.fromJson(videoJson)).toList();
+        filteredVideos = videos; // Initially set filtered videos to all videos
       });
     } else {
       throw Exception('Failed to load video details');
     }
+  }
+
+  void filterVideos(String query) {
+    setState(() {
+      filteredVideos = videos
+          .where((video) =>
+          video.title.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
   }
 
   @override
@@ -39,9 +50,23 @@ class _VideoAppState extends State<VideoApp> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Video List'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () async {
+                final String? query = await showSearch(
+                  context: Scaffold.of(context).context,
+                  delegate: _CustomSearchDelegate(),
+                );
+                if (query != null) {
+                  filterVideos(query);
+                }
+              },
+            ),
+          ],
         ),
         body: VideoList(
-          videos: videos,
+          videos: filteredVideos,
           onVideoAdded: (video) {
             setState(() => videos.add(video));
           },
@@ -53,6 +78,45 @@ class _VideoAppState extends State<VideoApp> {
       theme: ThemeData.dark().copyWith(
         primaryColor: Colors.green,
       ),
+    );
+  }
+}
+
+class _CustomSearchDelegate extends SearchDelegate<String> {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return Center(
+      child: Text('Searching for "$query"...'),
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // Suggestions based on previous queries or any other logic
+    return Center(
+      child: Text('Type to search...'),
     );
   }
 }

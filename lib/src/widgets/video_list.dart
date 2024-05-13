@@ -30,7 +30,7 @@ class VideoList extends StatelessWidget {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(Icons.live_tv),
+                    // Icon(Icons.live_tv),
                     Text(
                       ' FTube',
                       textScaleFactor: 1.5,
@@ -50,21 +50,21 @@ class VideoList extends StatelessWidget {
               );
             },
           ),
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return VideoDialog(
-                    title: 'Add a New Video',
-                    onSubmit: onVideoAdded,
-                    video: VideoInfo(), // Pass a default video or the one you want to edit
-                  );
-                },
-              );
-            },
-          ),
+          // floatingActionButton: FloatingActionButton(
+          //   child: const Icon(Icons.add),
+          //   onPressed: () {
+          //     showDialog(
+          //       context: context,
+          //       builder: (context) {
+          //         return VideoDialog(
+          //           title: 'Add a New Video',
+          //           onSubmit: onVideoAdded,
+          //           video: VideoInfo(), // Pass a default video or the one you want to edit
+          //         );
+          //       },
+          //     );
+          //   },
+          // ),
         );
       },
     );
